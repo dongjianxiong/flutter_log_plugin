@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hzlogger/hzlogger_method_channel.dart';
+import 'package:hz_log_plugin/method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelHzlogger platform = MethodChannelHzlogger();
+  MethodChannelHzLog platform = MethodChannelHzLog();
   const MethodChannel channel = MethodChannel('hzlogger');
 
   setUp(() {
@@ -18,7 +18,8 @@ void main() {
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {

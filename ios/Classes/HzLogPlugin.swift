@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class HzloggerPlugin: NSObject, FlutterPlugin {
+public class HzLogPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "hzlogger", binaryMessenger: registrar.messenger())
-    let instance = HzloggerPlugin()
+    let channel = FlutterMethodChannel(name: "hz_log_plugin", binaryMessenger: registrar.messenger())
+    let instance = HzLogPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

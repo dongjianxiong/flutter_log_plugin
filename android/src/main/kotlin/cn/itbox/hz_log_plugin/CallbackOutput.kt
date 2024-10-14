@@ -1,4 +1,4 @@
-package cn.itbox.hzlogger
+package cn.itbox.hz_log_plugin
 
 import cn.itbox.klogger.output.LogOutput
 import cn.itbox.klogger.output.OutputEvent

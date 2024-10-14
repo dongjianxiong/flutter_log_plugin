@@ -1,7 +1,7 @@
-name: hzlogger
+name: hz_log_plugin
 description: "A new Flutter project."
 version: 0.0.1
-homepage:
+homepage: cn.itbox
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
@@ -35,10 +35,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: cn.itbox.hzlogger
-        pluginClass: HzloggerPlugin
+        package: cn.itbox.hz_log_plugin
+        pluginClass: HzLogPlugin
       ios:
-        pluginClass: HzloggerPlugin
+        pluginClass: HzLogPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

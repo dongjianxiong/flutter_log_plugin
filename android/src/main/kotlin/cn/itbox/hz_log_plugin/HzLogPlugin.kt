@@ -1,4 +1,4 @@
-package cn.itbox.hzlogger
+package cn.itbox.hz_log_plugin
 
 import android.content.Context
 import cn.itbox.klogger.Level
@@ -8,22 +8,22 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-/** HzloggerPlugin */
-class HzloggerPlugin : FlutterPlugin, MethodCallHandler {
+/** HzLogPlugin */
+class HzLogPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var applicationContext: Context
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         applicationContext = flutterPluginBinding.applicationContext
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "hzlogger")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "hz_log_plugin")
         channel.setMethodCallHandler(this)
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
-        } else if (call.method == "logger") {
-            val log = call.argument<String>("log")
+        } else if (call.method == "log") {
+            val log = call.argument<String>("content")
             val tag = call.argument<String>("tag") ?: ""
             val level = call.argument<Int>("level") ?: 1000
             val error = call.argument<String>("error")

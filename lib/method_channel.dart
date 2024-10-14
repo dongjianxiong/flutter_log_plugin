@@ -1,27 +1,26 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:hz_log_plugin/platform_interface.dart';
 
-import 'hzlogger_platform_interface.dart';
 import 'level.dart';
 
-/// An implementation of [HzloggerPlatform] that uses method channels.
-class MethodChannelHzlogger extends HzloggerPlatform {
+/// An implementation of [HzLogPlatform] that uses method channels.
+class MethodChannelHzLog extends HzLogPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('hzlogger');
+  final methodChannel = const MethodChannel('hz_log_plugin');
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
   @override
-  Future<void> logger(String log,String tag,
-      Level? level,{ String? error, String? stack,bool report = false}) async {
+  Future<void> log(String content, String tag, Level? level,
+      {String? error, String? stack, bool report = false}) async {
     var params = {
-      "log": log,
+      "content": content,
       "tag": tag,
       "level": level?.value,
       "error": error ?? "",
@@ -29,7 +28,7 @@ class MethodChannelHzlogger extends HzloggerPlatform {
       "report": report
     };
     print(params);
-    await methodChannel.invokeMethod('logger', params);
+    await methodChannel.invokeMethod('log', params);
   }
 
   @override
@@ -40,8 +39,7 @@ class MethodChannelHzlogger extends HzloggerPlatform {
 
   @override
   Future<void> setCallbackOutput(bool open) async {
-    await methodChannel
-        .invokeMethod('setCallbackOutput', {"open": open});
+    await methodChannel.invokeMethod('setCallbackOutput', {"open": open});
   }
 
   @override
@@ -50,13 +48,14 @@ class MethodChannelHzlogger extends HzloggerPlatform {
   }
 
   @override
-  Future<void> setFeishuOutput(String hookId, bool open,String projectId,String logStoreId) async {
-    var params = {"hookId": hookId, "open": open,"projectId":projectId,"logStoreId":logStoreId};
+  Future<void> setFeishuOutput(
+      String hookId, bool open, String projectId, String logStoreId) async {
+    var params = {"hookId": hookId, "open": open, "projectId": projectId, "logStoreId": logStoreId};
     await methodChannel.invokeMethod('setFeishuOutput', params);
   }
 
   @override
-  Future<void> openLogcat(bool open) async{
+  Future<void> openLogcat(bool open) async {
     await methodChannel.invokeMethod('openLogCat', {'open': open});
   }
 }

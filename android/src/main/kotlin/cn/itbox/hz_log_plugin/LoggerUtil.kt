@@ -1,4 +1,4 @@
-package cn.itbox.hzlogger
+package cn.itbox.hz_log_plugin
 
 import android.content.Context
 import cn.itbox.klogger.KLogger
