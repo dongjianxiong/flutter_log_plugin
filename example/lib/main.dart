@@ -17,8 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _hzLogPlugin = HzLog();
-  static const platform = MethodChannel('hzlogger');
+  static const platform = MethodChannel('hz_log_plugin');
 
   @override
   void initState() {
@@ -52,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _hzLogPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion = await HzLog.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -80,21 +79,21 @@ class _MyAppState extends State<MyApp> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    HzLog().i("????测试中", "tag", report: true);
+                    HzLog.i("????测试中", "tag", report: true);
                   },
                   child: Container(
                       color: Colors.blue, width: 120, height: 30, child: const Text('普通打印')),
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setExtra("设备信息", "5876876113-12313144687654-24567");
+                    HzLog.setExtra("设备信息", "5876876113-12313144687654-24567");
                   },
                   child: Container(
                       color: Colors.green, width: 120, height: 30, child: const Text('设置额外参数')),
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setFeishuOutput("abc094d5-058d-492a-8244-5430260afc12", true,
+                    HzLog.setFeishuOutput("abc094d5-058d-492a-8244-5430260afc12", true,
                         "proj-xtrace-6311756af3b4f6b5d1720412b48f646-cn-hangzhou", "logstore-rum");
                   },
                   child: Container(
@@ -102,21 +101,21 @@ class _MyAppState extends State<MyApp> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setFeishuOutput("abc094d5-058d-492a-8244-5430260afc12", false, "", "");
+                    HzLog.setFeishuOutput("abc094d5-058d-492a-8244-5430260afc12", false, "", "");
                   },
                   child: Container(
                       color: Colors.pink, width: 120, height: 30, child: const Text('关闭飞书接收')),
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setFileOutput(true);
+                    HzLog.setFileOutput(true);
                   },
                   child: Container(
                       color: Colors.red, width: 120, height: 30, child: const Text('打开文件接收')),
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setFileOutput(false);
+                    HzLog.setFileOutput(false);
                   },
                   child: Container(
                       color: Colors.purpleAccent,
@@ -129,7 +128,7 @@ class _MyAppState extends State<MyApp> {
                     try {
                       throw const FormatException("格式化失误");
                     } catch (e, stack) {
-                      HzLog().e("捕获到异常", "tag", error: e.toString(), stack: stack.toString());
+                      HzLog.e("捕获到异常", "tag", error: e.toString(), stack: stack.toString());
                     }
                   },
                   child: Container(
@@ -137,14 +136,14 @@ class _MyAppState extends State<MyApp> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().openLogcat(true);
+                    HzLog.openLogcat(true);
                   },
                   child: Container(
                       color: Colors.brown, width: 120, height: 30, child: const Text('打开logcat')),
                 ),
                 GestureDetector(
                   onTap: () {
-                    HzLog().setCallbackOutput(true);
+                    HzLog.setCallbackOutput(true);
                   },
                   child: Container(
                       color: Colors.cyan, width: 120, height: 30, child: const Text('开始接收回调')),

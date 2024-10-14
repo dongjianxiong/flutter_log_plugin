@@ -17,7 +17,7 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> log(String content, String tag, Level? level,
+  Future<void> log(String content, String tag, HzLevel? level,
       {String? error, String? stack, bool report = false}) async {
     var params = {
       "content": content,

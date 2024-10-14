@@ -76,7 +76,7 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> log(String log, String tag, Level? level,
+  Future<void> log(String log, String tag, HzLevel? level,
       {String? error, String? stack, bool report = false}) {
     // TODO: implement logger
     throw UnimplementedError();
@@ -95,6 +95,6 @@ void main() {
     MockHzLogPlatform fakePlatform = MockHzLogPlatform();
     HzLogPlatform.instance = fakePlatform;
 
-    expect(await hzLogPlugin.getPlatformVersion(), '42');
+    expect(await HzLog.getPlatformVersion(), '42');
   });
 }

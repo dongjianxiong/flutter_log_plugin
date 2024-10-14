@@ -1,27 +1,13 @@
-enum Level {
-  all,
-  trace,
-  debug,
-  info,
-  warning,
-  error,
-}
+enum HzLevel {
+  all(0),
+  trace(1000),
+  debug(2000),
+  info(3000),
+  warning(4000),
+  error(5000),
+  fatal(6000),
+  ;
 
-extension LevelExtension on Level {
-  int get value {
-    switch (this) {
-      case Level.all:
-        return 0;
-      case Level.trace:
-        return 1000;
-      case Level.debug:
-        return 2000;
-      case Level.info:
-        return 3000;
-      case Level.warning:
-        return 4000;
-      case Level.error:
-        return 5000;
-    }
-  }
+  final int value;
+  const HzLevel(this.value);
 }

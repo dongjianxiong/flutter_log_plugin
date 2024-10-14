@@ -29,7 +29,7 @@ abstract class HzLogPlatform extends PlatformInterface {
   }
 
   ///打印日志
-  Future<void> log(String content, String tag, Level? level,
+  Future<void> log(String content, String tag, HzLevel? level,
       {String? error, String? stack, bool report = false}) {
     throw UnimplementedError('logger() has not been implemented.');
   }
