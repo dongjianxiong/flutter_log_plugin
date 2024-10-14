@@ -54,6 +54,10 @@ abstract class HzLogPlatform extends PlatformInterface {
     throw UnimplementedError('openLogcat() has not been implemented.');
   }
 
+  Future<void> setLogLevel(HzLevel level) async {
+    throw UnimplementedError('openLogcat() has not been implemented.');
+  }
+
   ///设置打开/关闭ARMS
   Future<void> setCallbackOutput(bool open) {
     throw UnimplementedError('setCallbackOutput() has not been implemented.');

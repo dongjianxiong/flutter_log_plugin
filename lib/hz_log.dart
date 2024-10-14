@@ -40,6 +40,9 @@ class HzLog {
     await HzLogPlatform.instance.openLogcat(open);
   }
 
+  // 设置当前日志级别
+  static Future<void> setLogLevel(HzLevel level) async {}
+
   static Future<void> setFeishuOutput(
       String hookId, bool open, String projectId, String logStoreId) async {
     await HzLogPlatform.instance.setFeishuOutput(hookId, open, projectId, logStoreId);

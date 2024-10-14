@@ -58,4 +58,9 @@ class MethodChannelHzLog extends HzLogPlatform {
   Future<void> openLogcat(bool open) async {
     await methodChannel.invokeMethod('openLogCat', {'open': open});
   }
+
+  @override
+  Future<void> setLogLevel(HzLevel level) async {
+    await methodChannel.invokeMethod('setLogLevel', {'level': level.value});
+  }
 }

@@ -81,6 +81,12 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
     // TODO: implement logger
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> setLogLevel(HzLevel level) {
+    // TODO: implement setLogLevel
+    throw UnimplementedError();
+  }
 }
 
 void main() {
