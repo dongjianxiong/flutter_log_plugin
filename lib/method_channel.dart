@@ -27,8 +27,31 @@ class MethodChannelHzLog extends HzLogPlatform {
       "stack": stack ?? "",
       "report": report
     };
-    print(params);
+    // print(params);
     await methodChannel.invokeMethod('log', params);
+  }
+
+  @override
+  Future<void> setLogLevel(HzLevel level) async {
+    await methodChannel.invokeMethod('setLogLevel', {'level': level.value});
+  }
+
+  @override
+  Future<void> setPrefix(String prefix) async {
+    await methodChannel.invokeMethod('setPrefix', {'prefix': prefix});
+  }
+
+  @override
+  Future<void> reportLog(String content, String tag, HzLevel? level,
+      {String? error, String? stack}) async {
+    var params = {
+      "content": content,
+      "tag": tag,
+      "level": level?.value,
+      "error": error ?? "",
+      "stack": stack ?? "",
+    };
+    await methodChannel.invokeMethod('reportLog', params);
   }
 
   @override
@@ -57,10 +80,5 @@ class MethodChannelHzLog extends HzLogPlatform {
   @override
   Future<void> openLogcat(bool open) async {
     await methodChannel.invokeMethod('openLogCat', {'open': open});
-  }
-
-  @override
-  Future<void> setLogLevel(HzLevel level) async {
-    await methodChannel.invokeMethod('setLogLevel', {'level': level.value});
   }
 }

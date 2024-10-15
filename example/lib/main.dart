@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hz_log_plugin/hz_log_plugin.dart';
 
+import 'log_dropdown_widget.dart';
+import 'log_level_dropdown_widget.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -16,14 +19,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
   static const platform = MethodChannel('hz_log_plugin');
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
     _setListeners();
+    HzLog.setPrefix("Driver");
   }
 
   void _setListeners() async {
@@ -46,25 +48,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion = await HzLog.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
+  // Future<void> initPlatformState() async {
+  //   String platformVersion;
+  //   // Platform messages may fail, so we use a try/catch PlatformException.
+  //   // We also handle the message potentially returning null.
+  //   try {
+  //   } on PlatformException {
+  //     platformVersion = 'Failed to get platform version.';
+  //   }
+  //
+  //   // If the widget was removed from the tree while the asynchronous platform
+  //   // message was in flight, we want to discard the reply rather than calling
+  //   // setState to update our non-existent appearance.
+  //   if (!mounted) return;
+  //
+  //   setState(() {
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +77,8 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    HzLog.i("????测试中", "tag", report: true);
-                  },
-                  child: Container(
-                      color: Colors.blue, width: 120, height: 30, child: const Text('普通打印')),
-                ),
+                const LogLevelDropdownWidget(),
+                const LogDropdownWidget(),
                 GestureDetector(
                   onTap: () {
                     HzLog.setExtra("设备信息", "5876876113-12313144687654-24567");
@@ -128,7 +123,7 @@ class _MyAppState extends State<MyApp> {
                     try {
                       throw const FormatException("格式化失误");
                     } catch (e, stack) {
-                      HzLog.e("捕获到异常", "tag", error: e.toString(), stack: stack.toString());
+                      HzLog.e("捕获到异常", tag: "tag", error: e.toString(), stackLimit: 5);
                     }
                   },
                   child: Container(

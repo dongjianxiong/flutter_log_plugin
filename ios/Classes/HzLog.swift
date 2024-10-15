@@ -7,97 +7,75 @@
 
 import Foundation
 
-enum HzLevel: Int {
-    case all = 0
-    case trace = 1000
-    case debug = 2000
-    case info = 3000
-    case warning = 4000
-    case error = 5000
-    case fatal = 6000
-    
-    func levelString() -> String {
-        switch self {
-        case .all:
-            return "ALL"
-        case .trace:
-            return "TRACE"
-        case .debug:
-            return "DEBUG"
-        case .info:
-            return "INFO"
-        case .warning:
-            return "WARNING"
-        case .error:
-            return "ERROR"
-        case .fatal:
-            return "FATAL"
-        }
-    }
-    
-    // 日志级别对应的描述和表情
-    func descriptionWithEmoji() -> String {
-        switch self {
-        case .all:
-            return "📝 ALL"
-        case .trace:
-            return "🔍 TRACE"
-        case .debug:
-            return "🐞 DEBUG"
-        case .info:
-            return "ℹ️ INFO"
-        case .warning:
-            return "⚠️ WARNING"
-        case .error:
-            return "❌ ERROR"
-        case .fatal:
-            return "💀 FATAL"
-        }
-    }
-}
-
 class HzLog {
 
     // 默认日志级别
-    static var currentLevel: HzLevel = .all
+    static var _currentLevel: HzLogLevel = .all
 
+    // 默认前缀
+    static var _prefix: String = "HzLog"
+    
     // 设置当前日志级别
-    static func setLogLevel(_ level: HzLevel) {
-        currentLevel = level
+    static func setLogLevel(_ level: HzLogLevel) {
+        _currentLevel = level
+    }
+    
+    static func setPrefix(_ prefix: String) {
+        _prefix = prefix
     }
 
     // 判断日志是否需要打印
-    static func shouldLog(level: HzLevel) -> Bool {
-        return level.rawValue >= currentLevel.rawValue
+    static func shouldLog(level: HzLogLevel) -> Bool {
+        return level.rawValue >= _currentLevel.rawValue
     }
 
-    // 记录日志
-    static func log(tag: String, content: String, level: HzLevel, error: String? = nil, stack: String? = nil, report: Bool = false) {
+    static func log(tag: String? = nil, content: String, level: HzLogLevel, error: String? = nil, stack: String? = nil, report: Bool = false) {
         guard shouldLog(level: level) else {
             return // 不打印低于当前日志级别的日志
         }
 
-        var message = "[\(tag)] [\(level.descriptionWithEmoji())] \(content)"
-        if let error = error {
-            message += "\nError: \(error)"
-        }
-        if let stack = stack {
-            message += "\nStackTrace: \(stack)"
-        }
+        // 构建日志信息
+        let logMessage = buildLogMessage(tag: tag ?? _prefix, level: level)
 
-        // 输出到控制台（可扩展为其他输出方式）
-        print(message)
+        // 打印开始行、日志内容和结束行
+        printFormattedLog(logMessage: logMessage, content: content, level: level, error: error, stack: stack)
 
-        // 如果需要上报（如飞书、远程服务器等）
+        // 如果需要上报
         if report {
-            reportLog(tag: tag, content: content, level: level, error: error, stack: stack)
+            reportLog(tag: tag ?? _prefix, content: content, level: level, error: error, stack: stack)
         }
     }
 
+    private static func buildLogMessage(tag: String, level: HzLogLevel) -> String {
+        let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium)
+        let processID = ProcessInfo.processInfo.processIdentifier
+        let threadID = Thread.isMainThread ? "Main" : "Background"
+        return "\(timestamp) [\(level.rawValue)] [\(processID): \(threadID)] - \(tag)"
+    }
+
+    private static func printFormattedLog(logMessage: String, content: String, level: HzLogLevel, error: String?, stack: String?) {
+        let startLine = "┌-------------------------\(level.emoji())\(level.levelString()) START \(level.emoji())---------------------------------"
+        let endLine =   "└-------------------------\(level.emoji())\(level.levelString())  END  \(level.emoji())---------------------------------"
+
+        print(startLine)
+//        print(logMessage)
+        var fullMessage = "[\(logMessage)] \(content)"
+        
+        if let error = error {
+            fullMessage += "\nError: \(error)"
+        }
+        if let stack = stack {
+            fullMessage += "\nStackTrace: \(stack)"
+        }
+        print(fullMessage)
+        print(endLine)
+    }
+
+
     // 上报日志方法（实现上报逻辑，如飞书、远程日志服务器）
-    static func reportLog(tag: String, content: String, level: HzLevel, error: String?, stack: String?) {
+    static func reportLog(tag: String?, content: String, level: HzLogLevel, error: String?, stack: String?) {
         // 模拟上报行为
-        print("上报日志: [\(tag)] [\(level)] \(content)")
+        print("上报日志: [\(tag ?? _prefix)] [\(level)] \(content)")
     }
 
     // 设置额外信息

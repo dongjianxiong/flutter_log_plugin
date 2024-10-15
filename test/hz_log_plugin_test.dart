@@ -51,17 +51,17 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
     throw UnimplementedError();
   }
 
-  @override
-  Future<void> t(String log, String tag, {String? error, String? stack, bool report = false}) {
-    // TODO: implement t
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> w(String log, String tag, {String? error, String? stack, bool report = false}) {
-    // TODO: implement w
-    throw UnimplementedError();
-  }
+  // @override
+  // Future<void> t(String log, String tag, {String? error, String? stack, bool report = false}) {
+  //   // TODO: implement t
+  //   throw UnimplementedError();
+  // }
+  //
+  // @override
+  // Future<void> w(String log, String tag, {String? error, String? stack, bool report = false}) {
+  //   // TODO: implement w
+  //   throw UnimplementedError();
+  // }
 
   @override
   Future<void> setCallbackOutput(bool open) {
@@ -87,6 +87,19 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
     // TODO: implement setLogLevel
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> reportLog(String content, String tag, HzLevel? level,
+      {String? error, String? stack}) {
+    // TODO: implement reportLog
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setPrefix(String prefix) {
+    // TODO: implement setPrefix
+    throw UnimplementedError();
+  }
 }
 
 void main() {
@@ -100,7 +113,5 @@ void main() {
     HzLog hzLogPlugin = HzLog();
     MockHzLogPlatform fakePlatform = MockHzLogPlatform();
     HzLogPlatform.instance = fakePlatform;
-
-    expect(await HzLog.getPlatformVersion(), '42');
   });
 }

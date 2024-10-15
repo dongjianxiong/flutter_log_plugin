@@ -34,6 +34,22 @@ abstract class HzLogPlatform extends PlatformInterface {
     throw UnimplementedError('logger() has not been implemented.');
   }
 
+  /// 设置日志级别
+  Future<void> setLogLevel(HzLevel level) async {
+    throw UnimplementedError('openLogcat() has not been implemented.');
+  }
+
+  /// 设置日志前缀
+  Future<void> setPrefix(String prefix) async {
+    throw UnimplementedError('openLogcat() has not been implemented.');
+  }
+
+  /// 日志上报
+  Future<void> reportLog(String content, String tag, HzLevel? level,
+      {String? error, String? stack}) {
+    throw UnimplementedError('logger() has not been implemented.');
+  }
+
   ///设置or清除自定义字段
   Future<void> setExtra(String key, String? value) {
     throw UnimplementedError('setExtra() has not been implemented.');
@@ -51,10 +67,6 @@ abstract class HzLogPlatform extends PlatformInterface {
 
   ///设置打开/关闭logcat
   Future<void> openLogcat(bool open) {
-    throw UnimplementedError('openLogcat() has not been implemented.');
-  }
-
-  Future<void> setLogLevel(HzLevel level) async {
     throw UnimplementedError('openLogcat() has not been implemented.');
   }
 
