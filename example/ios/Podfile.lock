@@ -1,4 +1,8 @@
 PODS:
+  - alibabacloud_rum_flutter_plugin (0.2.1):
+    - AlibabaCloudRUM (= 0.3.2)
+    - Flutter
+  - AlibabaCloudRUM (0.3.2)
   - Flutter (1.0.0)
   - hz_log_plugin (0.0.1):
     - Flutter
@@ -6,11 +10,18 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - alibabacloud_rum_flutter_plugin (from `.symlinks/plugins/alibabacloud_rum_flutter_plugin/ios`)
   - Flutter (from `Flutter`)
   - hz_log_plugin (from `.symlinks/plugins/hz_log_plugin/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
 
+SPEC REPOS:
+  trunk:
+    - AlibabaCloudRUM
+
 EXTERNAL SOURCES:
+  alibabacloud_rum_flutter_plugin:
+    :path: ".symlinks/plugins/alibabacloud_rum_flutter_plugin/ios"
   Flutter:
     :path: Flutter
   hz_log_plugin:
@@ -19,8 +30,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
+  alibabacloud_rum_flutter_plugin: 8244579060a6334acfc9e3da8aef3d90eba6c208
+  AlibabaCloudRUM: 7dfd68bbce081ad22f1c681d7e151ad31ecdff07
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  hz_log_plugin: 19f8e4844a44fbe5d6ed615bee86b77246c73655
+  hz_log_plugin: d3a201253e6abf3e5951b18370740ef3877a5b24
   integration_test: 13825b8a9334a850581300559b8839134b124670
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796

@@ -10,7 +10,7 @@ class LogDropdownWidget extends StatefulWidget {
 
 class _LogDropdownWidgetState extends State<LogDropdownWidget> {
   // 日志级别的选项
-  final List<String> _logLevels = ['Trace', 'Debug', 'Info', 'Warning', 'Error', 'Fatal'];
+  final List<String> _logLevels = ['Trace', 'Debug', 'Info', 'Warning', 'Error', 'Fatal', '压测'];
   String? _selectedLogLevel;
 
   @override
@@ -48,18 +48,24 @@ class _LogDropdownWidgetState extends State<LogDropdownWidget> {
         HzLog.i('This is an info log.', tag: 'Logout');
         break;
       case 'Warning':
+        HzLog.w('This is a warning log.', tag: 'HTTP');
+        break;
+      case 'Error':
         try {
           throw const FormatException("格式化失误");
         } catch (e, stack) {
-          HzLog.w('This is a warning log.', tag: 'HTTP');
-          // HzLog.w("捕获到异常", tag: "tag", error: e.toString(), stack: stack.toString());
+          HzLog.e('This is an error log.', tag: 'Trip', error: e.toString());
         }
-        break;
-      case 'Error':
-        HzLog.e('This is an error log.', tag: 'Trip', error: Error().toString());
         break;
       case 'Fatal':
         HzLog.f('This is a fatal log.', tag: 'Order');
+        break;
+      case '压测':
+        for (int i = 0; i < 1000; i++) {
+          HzLog.t(
+              'This is a trace log.You can see it in the logcat or file or feishu. I hope you enjoy it!',
+              tag: 'Order');
+        }
         break;
       default:
         print('No log level selected.');

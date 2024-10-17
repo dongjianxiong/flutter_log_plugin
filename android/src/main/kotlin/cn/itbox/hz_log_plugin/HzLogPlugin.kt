@@ -53,8 +53,8 @@ class HzLogPlugin : FlutterPlugin, MethodCallHandler {
             if (hookId != null) {
                 LoggerUtil.getInstance().changeFeishuOutPut(hookId, open,projectId,logStoreId)
             }
-        } else if (call.method == "setFileOutput") {
-            val open = call.argument<Boolean>("open") ?: false
+        } else if (call.method == "enableFileOutput") {
+            val open = call.argument<Boolean>("enbale") ?: false
             LoggerUtil.getInstance().changeFileOutPut(applicationContext, open)
         } else if (call.method == "setCallbackOutput") {
             val open = call.argument<Boolean>("open") ?: false

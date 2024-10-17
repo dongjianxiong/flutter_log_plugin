@@ -29,7 +29,7 @@ abstract class HzLogPlatform extends PlatformInterface {
   }
 
   ///打印日志
-  Future<void> log(String content, String tag, HzLevel? level,
+  Future<void> log(String content, String tag, HzLevel? level, String date,
       {String? error, String? stack, bool report = false}) {
     throw UnimplementedError('logger() has not been implemented.');
   }
@@ -45,7 +45,7 @@ abstract class HzLogPlatform extends PlatformInterface {
   }
 
   /// 日志上报
-  Future<void> reportLog(String content, String tag, HzLevel? level,
+  Future<void> reportLog(String content, String tag, HzLevel? level, String date,
       {String? error, String? stack}) {
     throw UnimplementedError('logger() has not been implemented.');
   }
@@ -61,13 +61,21 @@ abstract class HzLogPlatform extends PlatformInterface {
   }
 
   ///设置打开/关闭文件输出器
-  Future<void> setFileOutput(bool open) {
-    throw UnimplementedError('setFileOutput() has not been implemented.');
+  Future<void> enableFileOutput(bool enable) {
+    throw UnimplementedError('enableFileOutput() has not been implemented.');
   }
 
   ///设置打开/关闭logcat
   Future<void> openLogcat(bool open) {
     throw UnimplementedError('openLogcat() has not been implemented.');
+  }
+
+  Future<void> clearLog() {
+    throw UnimplementedError('clearLog() has not been implemented.');
+  }
+
+  Future<String> getLogFiles() {
+    throw UnimplementedError('getLogFiles() has not been implemented.');
   }
 
   ///设置打开/关闭ARMS

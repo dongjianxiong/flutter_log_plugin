@@ -30,6 +30,26 @@ enum HzLevel {
     }
   }
 
+  // 日志级别的短字符串表示
+  String levelShortString() {
+    switch (this) {
+      case HzLevel.all:
+        return "ALL";
+      case HzLevel.trace:
+        return "T";
+      case HzLevel.debug:
+        return "D";
+      case HzLevel.info:
+        return "I";
+      case HzLevel.warning:
+        return "W";
+      case HzLevel.error:
+        return "E";
+      case HzLevel.fatal:
+        return "F";
+    }
+  }
+
   // 日志级别对应的描述和表情
   String emoji() {
     switch (this) {

@@ -28,6 +28,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  #应用实时监控服务ARMS
+  alibabacloud_rum_flutter_plugin: ^0.2.3
 
 dev_dependencies:
   integration_test:

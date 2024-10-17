@@ -17,17 +17,17 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> log(String content, String tag, HzLevel? level,
+  Future<void> log(String content, String tag, HzLevel? level, String date,
       {String? error, String? stack, bool report = false}) async {
     var params = {
       "content": content,
       "tag": tag,
       "level": level?.value,
+      'date': date,
       "error": error ?? "",
       "stack": stack ?? "",
       "report": report
     };
-    // print(params);
     await methodChannel.invokeMethod('log', params);
   }
 
@@ -42,14 +42,15 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> reportLog(String content, String tag, HzLevel? level,
+  Future<void> reportLog(String content, String tag, HzLevel? level, String date,
       {String? error, String? stack}) async {
     var params = {
-      "content": content,
-      "tag": tag,
-      "level": level?.value,
-      "error": error ?? "",
-      "stack": stack ?? "",
+      'content': content,
+      'tag': tag,
+      'level': level?.value,
+      'formattedDate': date,
+      'error': error ?? '',
+      'stack': stack ?? '',
     };
     await methodChannel.invokeMethod('reportLog', params);
   }
@@ -66,8 +67,8 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> setFileOutput(bool open) async {
-    await methodChannel.invokeMethod('setFileOutput', {'open': open});
+  Future<void> enableFileOutput(bool enable) async {
+    await methodChannel.invokeMethod('enableFileOutput', {'enable': enable});
   }
 
   @override
@@ -80,5 +81,22 @@ class MethodChannelHzLog extends HzLogPlatform {
   @override
   Future<void> openLogcat(bool open) async {
     await methodChannel.invokeMethod('openLogCat', {'open': open});
+  }
+
+  @override
+  Future<void> clearLog() async {
+    await methodChannel.invokeMethod('clearLog');
+  }
+
+  @override
+  Future<String> getLogFiles() async {
+    final log = await methodChannel.invokeMethod('getLogFiles');
+    if (log == null) {
+      return 'null';
+    }
+    if (log is! String) {
+      return log.toString();
+    }
+    return log;
   }
 }

@@ -46,8 +46,8 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> setFileOutput(bool open) {
-    // TODO: implement setFileOutput
+  Future<void> enableFileOutput(bool enable) {
+    // TODO: implement enableFileOutput
     throw UnimplementedError();
   }
 
@@ -76,7 +76,7 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> log(String log, String tag, HzLevel? level,
+  Future<void> log(String log, String tag, HzLevel? level, String formattedDate,
       {String? error, String? stack, bool report = false}) {
     // TODO: implement logger
     throw UnimplementedError();
@@ -89,7 +89,7 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> reportLog(String content, String tag, HzLevel? level,
+  Future<void> reportLog(String content, String tag, HzLevel? level, String formattedDate,
       {String? error, String? stack}) {
     // TODO: implement reportLog
     throw UnimplementedError();
@@ -98,6 +98,18 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   @override
   Future<void> setPrefix(String prefix) {
     // TODO: implement setPrefix
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> clearLog() {
+    // TODO: implement clearLog
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getLogFiles() {
+    // TODO: implement getLogFiles
     throw UnimplementedError();
   }
 }

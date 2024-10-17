@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum HzLogLevel: Int {
+public enum HzLogLevel: Int {
     case all = 0
     case trace = 1000
     case debug = 2000
@@ -17,7 +17,7 @@ enum HzLogLevel: Int {
     case fatal = 6000
 
     // 日志级别对应的字符串表示
-    func levelString() -> String {
+    public func levelString() -> String {
         switch self {
         case .all:
             return "ALL"
@@ -35,9 +35,28 @@ enum HzLogLevel: Int {
             return "FATAL"
         }
     }
+    
+    public func levelShortString() -> String {
+        switch self {
+        case .all:
+            return "ALL"
+        case .trace:
+            return "T"
+        case .debug:
+            return "D"
+        case .info:
+            return "I"
+        case .warning:
+            return "W"
+        case .error:
+            return "E"
+        case .fatal:
+            return "F"
+        }
+    }
 
     // 日志级别对应的描述和表情
-    func emoji() -> String {
+    public func emoji() -> String {
         switch self {
         case .all:
             return "📝"

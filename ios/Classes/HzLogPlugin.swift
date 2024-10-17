@@ -27,10 +27,15 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
             handleSetExtra(call: call, result: result)
         case "setFeishuOutput":
             handleSetFeishuOutput(call: call, result: result)
-        case "setFileOutput":
-            handleSetFileOutput(call: call, result: result)
+        case "enableFileOutput":
+            handleEnableFileOutput(call: call, result: result)
         case "setCallbackOutput":
             handleSetCallbackOutput(call: call, result: result)
+        case "clearLog":
+            handleClearLog(call: call, result: result)
+        case "getLogFiles":
+            handleGetLogFiles(call: call, result: result)
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -51,33 +56,17 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         let tag = arguments["tag"] as? String
         let level = HzLogLevel(rawValue: arguments["level"] as? Int ?? 1000) ?? .trace
         let stack = arguments["stack"] as? String
+        let dateFormat = arguments["date"] as? String
         let error = arguments["error"] as? String
         let report = arguments["report"] as? Bool ?? false
-        HzLog.log(tag: tag, content: content, level: level, error: error, stack: stack, report: report)
-        result(nil)
-    }
-
-    // 处理日志级别设置
-    private func handleSetLogLevel(call: FlutterMethodCall, result: FlutterResult) {
-        
-        guard let arguments = call.arguments as? [String: Any],
-            let levelRawValue = arguments["level"] as? Int, 
-            let level = HzLogLevel(rawValue: levelRawValue) else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setFileOutput", details: call.arguments))
-            return
-        }
-        HzLog.setLogLevel(level)
-        result(nil)
-    }
-    
-    // 处理设置前缀方法
-    private func handleSetPrefix(call: FlutterMethodCall, result: FlutterResult) {
-        guard let arguments = call.arguments as? [String: Any],
-            let prefix = arguments["prefix"] as? String else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setFileOutput", details: call.arguments))
-            return
-        }
-        HzLog.setPrefix(prefix)
+        HzLogManager.log(tag: tag, 
+                         content: content,
+                         level: level,
+                         date: Date.dateFromFormatString(dateString: dateFormat),
+                         error: error,
+                         stack: stack, 
+                         print: false,
+                         report: report)
         result(nil)
     }
     
@@ -90,20 +79,45 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         }
         let tag = arguments["tag"] as? String
         let level = HzLogLevel(rawValue: arguments["level"] as? Int ?? 1000) ?? .trace
+        let dateFormat = arguments["date"] as? String
         let stack = arguments["stack"] as? String
         let error = arguments["error"] as? String
-        HzLog.reportLog(tag: tag, content: content, level: level, error: error, stack: stack)
+        HzLogManager.reportLog(tag: tag, 
+                               content: content,
+                               level: level,
+                               date: Date.dateFromFormatString(dateString: dateFormat),
+                               error: error,
+                               stack: stack)
         result(nil)
     }
 
-    // 处理开启 Logcat
-    private func handleOpenLogcat(call: FlutterMethodCall, result: FlutterResult) {
+
+    // 处理日志级别设置
+    private func handleSetLogLevel(call: FlutterMethodCall, result: FlutterResult) {
+        
         guard let arguments = call.arguments as? [String: Any],
-              let open = arguments["open"] as? Bool else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setFileOutput", details: call.arguments))
+            let levelRawValue = arguments["level"] as? Int, 
+            let level = HzLogLevel(rawValue: levelRawValue) else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
             return
         }
-        HzLog.openLogcat(open: open)
+        HzLogManager.setLogLevel(level)
+        result(nil)
+    }
+    
+    // 处理设置前缀方法
+    private func handleSetPrefix(call: FlutterMethodCall, result: FlutterResult) {
+        guard let arguments = call.arguments as? [String: Any],
+            let prefix = arguments["prefix"] as? String else {
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
+            return
+        }
+        HzLogManager.setPrefix(prefix)
+        result(nil)
+    }
+    
+    // 处理开启 Logcat
+    private func handleOpenLogcat(call: FlutterMethodCall, result: FlutterResult) {
         result(nil)
     }
 
@@ -115,7 +129,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setExtra", details: call.arguments))
             return
         }
-        HzLog.setExtra(key: key, value: value)
+        HzLogManager.setExtra(key: key, value: value)
         result(nil)
     }
 
@@ -129,18 +143,18 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setFeishuOutput", details: call.arguments))
             return
         }
-        HzLog.setFeishuOutput(hookId: hookId, open: open, projectId: projectId, logStoreId: logStoreId)
+        HzLogManager.enableFeishuNotify(hookId: hookId, enable: open, projectId: projectId, logStoreId: logStoreId)
         result(nil)
     }
 
     // 处理文件输出设置
-    private func handleSetFileOutput(call: FlutterMethodCall, result: FlutterResult) {
+    private func handleEnableFileOutput(call: FlutterMethodCall, result: FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
               let open = arguments["open"] as? Bool else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setFileOutput", details: call.arguments))
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
             return
         }
-        HzLog.setFileOutput(open: open)
+        HzLogManager.enableFileLog(enable: open)
         result(nil)
     }
 
@@ -151,7 +165,16 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setCallbackOutput", details: call.arguments))
             return
         }
-        HzLog.setCallbackOutput(open: open)
+        HzLogManager.enableServerLog(enable: open)
         result(nil)
+    }
+    
+    private func handleClearLog(call: FlutterMethodCall, result: FlutterResult) {
+        HzLogManager.clearLog()
+        result(nil)
+    }
+    
+    private func handleGetLogFiles(call: FlutterMethodCall, result: FlutterResult) {
+        result(HzLogManager.getLogFiles())
     }
 }
