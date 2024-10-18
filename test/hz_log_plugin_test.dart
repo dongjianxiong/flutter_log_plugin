@@ -76,7 +76,7 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> log(String log, String tag, HzLevel? level, String formattedDate,
+  Future<void> log(String log, String? tag, HzLevel? level, String formattedDate,
       {String? error, String? stack, bool report = false}) {
     // TODO: implement logger
     throw UnimplementedError();
@@ -89,7 +89,7 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   }
 
   @override
-  Future<void> reportLog(String content, String tag, HzLevel? level, String formattedDate,
+  Future<void> reportLog(String content, String? tag, HzLevel? level, String formattedDate,
       {String? error, String? stack}) {
     // TODO: implement reportLog
     throw UnimplementedError();
@@ -110,6 +110,24 @@ class MockHzLogPlatform with MockPlatformInterfaceMixin implements HzLogPlatform
   @override
   Future<String> getLogFiles() {
     // TODO: implement getLogFiles
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setMaxServerLogCount(int logCount) {
+    // TODO: implement setMaxServerLogCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setMaxServerLogInterval(int timeInterval) {
+    // TODO: implement setMaxServerLogInterval
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setMaxServerLogSize(int maxSize) {
+    // TODO: implement setMaxServerLogSize
     throw UnimplementedError();
   }
 }

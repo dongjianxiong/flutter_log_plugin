@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:hz_log_plugin/hz_log.dart';
 import 'package:hz_log_plugin/platform_interface.dart';
 
 import 'level.dart';
@@ -17,10 +18,10 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> log(String content, String tag, HzLevel? level, String date,
+  Future<void> log(String message, String? tag, HzLevel? level, String date,
       {String? error, String? stack, bool report = false}) async {
     var params = {
-      "content": content,
+      "message": message,
       "tag": tag,
       "level": level?.value,
       'date': date,
@@ -42,7 +43,7 @@ class MethodChannelHzLog extends HzLogPlatform {
   }
 
   @override
-  Future<void> reportLog(String content, String tag, HzLevel? level, String date,
+  Future<void> reportLog(String content, String? tag, HzLevel? level, String date,
       {String? error, String? stack}) async {
     var params = {
       'content': content,
@@ -59,6 +60,36 @@ class MethodChannelHzLog extends HzLogPlatform {
   Future<void> setExtra(String key, String? value) async {
     var params = {"key": key, "value": value};
     await methodChannel.invokeMethod<bool>('setExtra', params);
+  }
+
+  // 设置最大字符个数，最大值为8000
+  @override
+  Future<void> setMaxServerLogSize(int maxSize) async {
+    try {
+      await methodChannel.invokeMethod('setMaxServerLogSize', {'maxSize': maxSize});
+    } on PlatformException catch (e) {
+      HzLog.w('Failed to set max server log size: ${e.message}');
+    }
+  }
+
+  // 设置最大合并日志个数
+  @override
+  Future<void> setMaxServerLogCount(int logCount) async {
+    try {
+      await methodChannel.invokeMethod('setMaxServerLogCount', {'maxCount': logCount});
+    } on PlatformException catch (e) {
+      HzLog.w('Failed to set max server log count: ${e.message}');
+    }
+  }
+
+  // 设置最大日志上传间隔
+  @override
+  Future<void> setMaxServerLogInterval(int timeInterval) async {
+    try {
+      await methodChannel.invokeMethod('setMaxServerLogInterval', {'maxInterval': timeInterval});
+    } on PlatformException catch (e) {
+      HzLog.w('Failed to set max server log interval: ${e.message}');
+    }
   }
 
   @override

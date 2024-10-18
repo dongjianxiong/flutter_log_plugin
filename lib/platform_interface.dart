@@ -25,29 +25,44 @@ abstract class HzLogPlatform extends PlatformInterface {
   }
 
   Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+    throw UnimplementedError('getPlatformVersion() has not been implemented.');
   }
 
   ///打印日志
-  Future<void> log(String content, String tag, HzLevel? level, String date,
+  Future<void> log(String message, String? tag, HzLevel? level, String date,
       {String? error, String? stack, bool report = false}) {
-    throw UnimplementedError('logger() has not been implemented.');
+    throw UnimplementedError('log() has not been implemented.');
   }
 
   /// 设置日志级别
   Future<void> setLogLevel(HzLevel level) async {
-    throw UnimplementedError('openLogcat() has not been implemented.');
+    throw UnimplementedError('setLogLevel() has not been implemented.');
   }
 
   /// 设置日志前缀
   Future<void> setPrefix(String prefix) async {
-    throw UnimplementedError('openLogcat() has not been implemented.');
+    throw UnimplementedError('setPrefix() has not been implemented.');
+  }
+
+  // 设置最大字符个数，最大值为8000
+  Future<void> setMaxServerLogSize(int maxSize) async {
+    throw UnimplementedError('setMaxServerLogSize() has not been implemented.');
+  }
+
+  // 设置最大合并日志个数
+  Future<void> setMaxServerLogCount(int logCount) async {
+    throw UnimplementedError('setMaxServerLogCount() has not been implemented.');
+  }
+
+  // 设置最大日志上传间隔
+  Future<void> setMaxServerLogInterval(int timeInterval) async {
+    throw UnimplementedError('setMaxServerLogInterval() has not been implemented.');
   }
 
   /// 日志上报
-  Future<void> reportLog(String content, String tag, HzLevel? level, String date,
+  Future<void> reportLog(String message, String? tag, HzLevel? level, String date,
       {String? error, String? stack}) {
-    throw UnimplementedError('logger() has not been implemented.');
+    throw UnimplementedError('reportLog() has not been implemented.');
   }
 
   ///设置or清除自定义字段

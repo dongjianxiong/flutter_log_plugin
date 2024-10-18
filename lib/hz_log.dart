@@ -35,8 +35,23 @@ class HzLog {
     HzLogPlatform.instance.setPrefix(prefix);
   }
 
+  // 设置最大字符个数，最大值为8000
+  static Future<void> setMaxServerLogSize(int maxSize) async {
+    return await HzLogPlatform.instance.setMaxServerLogSize(maxSize);
+  }
+
+  // 设置最大合并日志个数
+  static Future<void> setMaxServerLogCount(int maxLogCount) async {
+    return await HzLogPlatform.instance.setMaxServerLogCount(maxLogCount);
+  }
+
+  // 设置最大日志上传间隔
+  static Future<void> setMaxServerLogInterval(int timeInterval) async {
+    return await HzLogPlatform.instance.setMaxServerLogInterval(timeInterval);
+  }
+
   Future<void> log(
-    String content, {
+    String message, {
     String? tag,
     HzLevel? level,
     String? error,
@@ -44,36 +59,36 @@ class HzLog {
     int stackLimit = 0,
     bool report = false,
   }) async {
-    if (level == null || !_instance._shouldLog(level: level)) {
-      return; // 不打印低于当前日志级别的日志
+    // 提前返回条件检查
+    if (level == null || !_instance._shouldLog(level: level) || message.isEmpty) {
+      return;
     }
-    int limit = stackLimit;
-    if (limit <= 0 && level.value > HzLevel.warning.value) {
-      limit = 8;
-    }
-    stackTrace = stackTrace ?? StackTrace.current;
-    String? stack;
-    if (limit > 0) {
-      stack = _getStackTrace(stackTrace, limit);
-    }
+
+    // 确定堆栈深度
+    int limit = (stackLimit > 0) ? stackLimit : (level.value >= HzLevel.error.value ? 8 : 0);
+
+    // 获取堆栈信息
+    String? stack = stackTrace != null
+        ? _getStackTrace(stackTrace, limit, skip: 0)
+        : (limit > 0 ? _getStackTrace(StackTrace.current, limit) : null);
+
     // 获取当前时间并格式化
     DateTime nowDate = DateTime.now();
     String formattedDate = _dateFormat(nowDate);
 
-    /// 判断是iOS还是Android
+    /// 控制台日志在Flutter打印，因为iOS原生打印无法再Android studio控制台展示
     if (Platform.isIOS) {
-      // 打印开始行、日志内容和结束行
-      _printFormattedLog(
-          prefix: tag == null ? _prefix : '$_prefix|$tag',
-          content: content,
+      _printFormattedLog(message,
+          tagFormat: tag == null ? _prefix : '$_prefix|$tag',
           level: level,
           date: _timeFormat(nowDate),
           error: error,
           stack: stack);
     }
+    // 调用平台日志接口
     HzLogPlatform.instance.log(
-      content,
-      tag == null ? _prefix : '$_prefix|$tag',
+      message,
+      tag,
       level,
       formattedDate,
       error: error,
@@ -83,13 +98,6 @@ class HzLog {
   }
 
   String _dateFormat(DateTime dateTime) {
-    // return "${date.year.toString().padLeft(4, '0')}-"
-    //     "${date.month.toString().padLeft(2, '0')}-"
-    //     "${date.day.toString().padLeft(2, '0')} "
-    //     "${date.hour.toString().padLeft(2, '0')}:"
-    //     "${date.minute.toString().padLeft(2, '0')}:"
-    //     "${date.second.toString().padLeft(2, '0')}";
-
     String year = dateTime.year.toString().padLeft(4, '0');
     String month = dateTime.month.toString().padLeft(2, '0');
     String day = dateTime.day.toString().padLeft(2, '0');
@@ -108,9 +116,9 @@ class HzLog {
     return '$hour:$minute:$second.$millisecond';
   }
 
-  static void _printFormattedLog({
-    required String prefix,
-    required String content,
+  static void _printFormattedLog(
+    message, {
+    required String tagFormat,
     required HzLevel level,
     required String date,
     String? error,
@@ -124,7 +132,7 @@ class HzLog {
     print(startLine);
     // print('[$prefix]');
 
-    String fullMessage = "[$date]-[D]-[$prefix] $content";
+    String fullMessage = "[$date]-[D]-[$tagFormat] $message";
     if (error != null) {
       fullMessage += "\nError: $error";
     }
@@ -135,17 +143,18 @@ class HzLog {
     print(endLine);
   }
 
-  static void reportLog({
-    required String tag,
-    required String content,
-    required HzLevel level,
-    required DateTime date,
+  static void reportLog(
+    String message, {
+    String? tag,
+    HzLevel? level,
+    DateTime? date,
     String? error,
     String? stack,
   }) {
     // 实现日志上报逻辑
-    HzLogPlatform.instance
-        .reportLog(content, tag, level, _instance._dateFormat(date), error: error, stack: stack);
+    HzLogPlatform.instance.reportLog(
+        message, tag, level, _instance._dateFormat(date ?? DateTime.now()),
+        error: error, stack: stack);
   }
 
   static Future<void> setExtra(String key, String? value) async {
@@ -204,29 +213,37 @@ class HzLog {
   }
 
   static Future<void> e(String content,
-      {String? tag, String? error, StackTrace? stackTrace, bool report = true}) async {
+      {String? tag,
+      String? error,
+      StackTrace? stackTrace,
+      int stackLimit = 5,
+      bool report = true}) async {
     await _instance.log(content,
         tag: tag,
         level: HzLevel.error,
         error: error,
         stackTrace: stackTrace,
-        stackLimit: 10,
+        stackLimit: stackLimit,
         report: report);
   }
 
   static Future<void> f(String content,
-      {String? tag, String? error, StackTrace? stackTrace, bool report = true}) async {
+      {String? tag,
+      String? error,
+      StackTrace? stackTrace,
+      int stackLimit = 5,
+      bool report = true}) async {
     await _instance.log(content,
         tag: tag,
         level: HzLevel.fatal,
         error: error,
         stackTrace: stackTrace,
-        stackLimit: 10,
+        stackLimit: stackLimit,
         report: report);
   }
 
   /// 根据限制个数获取堆栈信息
-  static String? _getStackTrace(StackTrace stackTrace, int stackLimit) {
+  static String? _getStackTrace(StackTrace stackTrace, int stackLimit, {int skip = 2}) {
     String? stack;
     if (stackLimit > 0) {
       // StackTrace stackTrace = StackTrace.current;
@@ -234,7 +251,7 @@ class HzLog {
       List<String> stackTraceLines = stackTrace.toString().split('\n');
       // 打印限定数量的堆栈信息
       int maxLines = stackLimit.clamp(0, stackTraceLines.length);
-      stack = stackTraceLines.skip(2).take(maxLines).join('\n');
+      stack = stackTraceLines.skip(skip).take(maxLines).join('\n');
     }
     return stack;
   }

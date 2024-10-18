@@ -9,6 +9,7 @@ void main() {
   AlibabaCloudRUM().start(
     const MyApp(),
     beforeRunApp: () async {
+      WidgetsFlutterBinding.ensureInitialized();
       AlibabaCloudRUM().setUserName('Driver');
     },
   );
@@ -34,6 +35,11 @@ class _MyAppState extends State<MyApp> {
 
   void _initializeLogging() {
     HzLog.setPrefix("Driver");
+    HzLog.enableFileOutput(true);
+    HzLog.setMaxServerLogCount(5);
+    HzLog.setMaxServerLogSize(2000);
+    HzLog.setMaxServerLogInterval(2);
+    HzLog.d('初始化Flutter APP', tag: 'init');
     // 设置其他初始化逻辑
   }
 
