@@ -186,39 +186,87 @@ class HzLog {
   }
 
   static Future<void> setFeishuOutput(
-      String hookId, bool open, String projectId, String logStoreId) async {
+    String hookId,
+    bool open,
+    String projectId,
+    String logStoreId,
+  ) async {
     await HzLogPlatform.instance.setFeishuOutput(hookId, open, projectId, logStoreId);
   }
 
-  static Future<void> t(String content, {String? tag, String? error, int stackLimit = 0}) async {
-    _instance.log(content,
-        tag: tag, level: HzLevel.trace, error: error, stackLimit: stackLimit, report: false);
+  static Future<void> t(
+    String message, {
+    String? tag,
+    String? error,
+    int stackLimit = 0,
+  }) async {
+    _instance.log(
+      message,
+      tag: tag,
+      level: HzLevel.trace,
+      error: error,
+      stackLimit: stackLimit,
+      report: false,
+    );
   }
 
-  static Future<void> d(String content, {String? tag, String? error, int stackLimit = 0}) async {
-    await _instance.log(content,
-        tag: tag, level: HzLevel.debug, error: error, stackLimit: stackLimit, report: false);
+  static Future<void> d(
+    String message, {
+    String? tag,
+    String? error,
+    int stackLimit = 0,
+  }) async {
+    await _instance.log(
+      message,
+      tag: tag,
+      level: HzLevel.debug,
+      error: error,
+      stackLimit: stackLimit,
+      report: false,
+    );
   }
 
-  static Future<void> i(String content,
-      {String? tag, String? error, int stackLimit = 0, bool report = true}) async {
-    await _instance.log(content,
-        tag: tag, level: HzLevel.info, error: error, stackLimit: stackLimit, report: report);
+  static Future<void> i(
+    String message, {
+    String? tag,
+    String? error,
+    int stackLimit = 0,
+    bool report = true,
+  }) async {
+    await _instance.log(
+      message,
+      tag: tag,
+      level: HzLevel.info,
+      error: error,
+      stackLimit: stackLimit,
+      report: report,
+    );
   }
 
-  static Future<void> w(String content,
-      {String? tag, String? error, int stackLimit = 0, bool report = true}) async {
-    await _instance.log(content,
-        tag: tag, level: HzLevel.warning, error: error, stackLimit: stackLimit, report: report);
+  static Future<void> w(
+    String message, {
+    String? tag,
+    String? error,
+    int stackLimit = 0,
+    bool report = true,
+  }) async {
+    await _instance.log(
+      message,
+      tag: tag,
+      level: HzLevel.warning,
+      error: error,
+      stackLimit: stackLimit,
+      report: report,
+    );
   }
 
-  static Future<void> e(String content,
+  static Future<void> e(String message,
       {String? tag,
       String? error,
       StackTrace? stackTrace,
       int stackLimit = 5,
       bool report = true}) async {
-    await _instance.log(content,
+    await _instance.log(message,
         tag: tag,
         level: HzLevel.error,
         error: error,
@@ -227,13 +275,13 @@ class HzLog {
         report: report);
   }
 
-  static Future<void> f(String content,
+  static Future<void> f(String message,
       {String? tag,
       String? error,
       StackTrace? stackTrace,
       int stackLimit = 5,
       bool report = true}) async {
-    await _instance.log(content,
+    await _instance.log(message,
         tag: tag,
         level: HzLevel.fatal,
         error: error,
@@ -243,7 +291,11 @@ class HzLog {
   }
 
   /// 根据限制个数获取堆栈信息
-  static String? _getStackTrace(StackTrace stackTrace, int stackLimit, {int skip = 2}) {
+  static String? _getStackTrace(
+    StackTrace stackTrace,
+    int stackLimit, {
+    int skip = 2,
+  }) {
     String? stack;
     if (stackLimit > 0) {
       // StackTrace stackTrace = StackTrace.current;

@@ -201,7 +201,7 @@ public class HzLogManager {
     }
 
     public static func clearLog() -> Void {
-        HzFileLogOutput.shared.clearLogFile()
+        HzFileLogOutput.shared.clearAllLogFiles()
     }
 
     public static func getLogFiles() -> String  {

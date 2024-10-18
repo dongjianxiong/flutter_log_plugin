@@ -20,6 +20,7 @@ let armsAppID: String = "j1h07oev3e@e5d6de2278c3293"
     
     func initLog() -> Void {
         HzLogManager.addServerOutput(DriverServerOutput())
+        HzLogManager.enableFileLog(enable: true)
         HzLog.d(message: "日志初始化", tag: "demo", error: nil, report: true)
     }
     

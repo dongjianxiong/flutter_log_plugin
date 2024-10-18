@@ -14,8 +14,8 @@ void main() {
     },
   );
   AlibabaCloudRUM().onRUMErrorCallback((error, stack, isAsync) {
-    FlutterErrorDetails details = FlutterErrorDetails(exception: error ?? Error(), stack: stack);
-    HzLog.e('A flutter exception log', error: details.toString(), stackTrace: stack);
+    // FlutterErrorDetails details = FlutterErrorDetails(exception: error ?? Error(), stack: stack);
+    HzLog.e('A flutter exception log', tag: 'error', error: error.toString(), stackTrace: stack);
   });
 }
 

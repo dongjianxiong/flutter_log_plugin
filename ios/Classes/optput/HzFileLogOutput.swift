@@ -188,20 +188,40 @@ class HzFileLogOutput: HzLogOutput {
         }
     }
 
-    // 清空日志文件
-    func clearLogFile() -> Void {
-        print("-------Attempting to clear log file")
-        return safeQueueSync {
-            let currentLogFileURL = getCurrentLogFileURL()
-            do {
-                let fileHandle = try FileHandle(forWritingTo: currentLogFileURL)
-                fileHandle.closeFile()
-                try "".data(using: .utf8)?.write(to: currentLogFileURL)
-                print("-------Log file cleared successfully.")
-            } catch {
-                print("-------Failed to clear log file: \(error)")
-            }
+    // 清空单个日志文件
+    private func clearLogFile(at url: URL) {
+        do {
+            let fileHandle = try FileHandle(forWritingTo: url)
+            fileHandle.closeFile()
+            try "".data(using: .utf8)?.write(to: url) // 写入空内容，清空文件
+            print("-------Log file \(url.lastPathComponent) cleared successfully.")
+        } catch {
+            print("-------Failed to clear log file \(url.lastPathComponent): \(error)")
         }
     }
+
+    // 清空当前日志文件
+    func clearCurrentLogFile() {
+        print("-------Attempting to clear current log file")
+        safeQueueSync {
+            let currentLogFileURL = getCurrentLogFileURL()
+            clearLogFile(at: currentLogFileURL)
+        }
+    }
+
+    // 清空所有日志文件
+    func clearAllLogFiles() {
+        print("-------clearAllLogFiles")
+        safeQueueSync {
+            for i in 1...maxLogFilesCount {
+                let logFileURL = logDirectory.appendingPathComponent("log_\(i).txt")
+                if FileManager.default.fileExists(atPath: logFileURL.path) {
+                    clearLogFile(at: logFileURL)
+                }
+            }
+            clearCurrentLogFile() // 清空当前日志文件
+        }
+    }
+
 }
 

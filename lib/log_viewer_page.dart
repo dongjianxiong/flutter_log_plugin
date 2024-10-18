@@ -26,11 +26,19 @@ class _LogViewerPageState extends State<HzLogViewerPage> {
       final String allLogs = await HzLog.getLogFiles();
       setState(() {
         // 将获取到的日志内容按文件拆分，并将最新日志放到最前面
-        logFiles = allLogs.split('\n\n').reversed.toList();
-        logFiles.removeAt(0);
-        logFiles.removeLast();
-        isExpandedList = List<bool>.filled(logFiles.length, false); // 初始化展开状态
-        isSelectedList = List<bool>.filled(logFiles.length, false); // 初始化选择状态
+        if (allLogs.isNotEmpty) {
+          logFiles = allLogs.split('\n\n').reversed.toList();
+          if (logFiles.isNotEmpty) {
+            if (logFiles.first.isEmpty) {
+              logFiles.removeAt(0);
+            }
+            if (logFiles.last.isEmpty) {
+              logFiles.removeLast();
+            }
+          }
+          isExpandedList = List<bool>.filled(logFiles.length, false); // 初始化展开状态
+          isSelectedList = List<bool>.filled(logFiles.length, false); // 初始化选择状态
+        }
       });
     } on PlatformException catch (e) {
       print("Failed to get log files: ${e.message}");
