@@ -19,4 +19,8 @@ class HzLogConfig: NSObject {
     static var prefix: String = "HzLog"
     
     static var extra: Dictionary<String, Any> = [:]
+    
+    static var maxServerLogSize: Int = 5000 // 最大字符个数改为5000
+    static var maxServerLogCount: Int = 10 // 最大合并日志个数
+    static var maxServerLogInterval: TimeInterval = 5.0 // 5秒钟
 }

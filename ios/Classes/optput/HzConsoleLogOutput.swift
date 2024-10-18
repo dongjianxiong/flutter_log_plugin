@@ -12,15 +12,16 @@ class HzConsoleLogOutput: HzLogOutput {
     
     static let shared = HzConsoleLogOutput()
     private init() {
+        
     }
     // 用于同步的串行队列，保证线程安全
     private let logQueue = DispatchQueue(label: "cn.itbox.hzlog.console.queue")
- 
+
     func log(_ logEvent: HzLogEvent) {
         logQueue.async {
 
-            let startLine = "┌-------------------------\(logEvent.level.emoji())\(logEvent.level.levelString()) START \(logEvent.level.emoji())---------------------------------"
-            let endLine = "└-------------------------\(logEvent.level.emoji())\(logEvent.level.levelString())  END  \(logEvent.level.emoji())---------------------------------"
+            let startLine = "┌-------------------------\(logEvent.level.emoji()) \(logEvent.level.levelString()) START \(logEvent.level.emoji())---------------------------------"
+            let endLine = "└-------------------------\(logEvent.level.emoji()) \(logEvent.level.levelString())  END  \(logEvent.level.emoji())---------------------------------"
 
             // 直接打印日志
             print(startLine)

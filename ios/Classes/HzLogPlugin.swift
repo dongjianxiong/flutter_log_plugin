@@ -21,6 +21,12 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
             handleSetPrefix(call: call, result: result)
         case "reportLog":
             handleReportLog(call: call, result: result)
+        case "setMaxServerLogCount":
+            handleSetMaxServerLogCount(call: call, result: result)
+        case "setMaxServerLogInterval":
+            handleSetMaxServerLogInterval(call: call, result: result)
+        case "setMaxServerLogSize":
+            handleSetMaxServerLogSize(call: call, result: result)
         case "openLogcat":
             handleOpenLogcat(call: call, result: result)
         case "setExtra":
@@ -36,6 +42,9 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         case "getLogFiles":
             handleGetLogFiles(call: call, result: result)
             
+
+            
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -49,7 +58,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
     // 处理日志记录
     private func handleLog(call: FlutterMethodCall, result: FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
-              let content = arguments["content"] as? String else {
+              let message = arguments["message"] as? String else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for log", details: call.arguments))
             return
         }
@@ -60,7 +69,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         let error = arguments["error"] as? String
         let report = arguments["report"] as? Bool ?? false
         HzLogManager.log(tag: tag, 
-                         content: content,
+                         message: message,
                          level: level,
                          date: Date.dateFromFormatString(dateString: dateFormat),
                          error: error,
@@ -73,8 +82,8 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
     // 处理日志记录
     private func handleReportLog(call: FlutterMethodCall, result: FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
-              let content = arguments["content"] as? String else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for log", details: call.arguments))
+              let message = arguments["message"] as? String else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for reportLog", details: call.arguments))
             return
         }
         let tag = arguments["tag"] as? String
@@ -83,7 +92,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         let stack = arguments["stack"] as? String
         let error = arguments["error"] as? String
         HzLogManager.reportLog(tag: tag, 
-                               content: content,
+                               message: message,
                                level: level,
                                date: Date.dateFromFormatString(dateString: dateFormat),
                                error: error,
@@ -98,7 +107,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
         guard let arguments = call.arguments as? [String: Any],
             let levelRawValue = arguments["level"] as? Int, 
             let level = HzLogLevel(rawValue: levelRawValue) else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setLogLevel", details: call.arguments))
             return
         }
         HzLogManager.setLogLevel(level)
@@ -109,7 +118,7 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
     private func handleSetPrefix(call: FlutterMethodCall, result: FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
             let prefix = arguments["prefix"] as? String else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setPrefix", details: call.arguments))
             return
         }
         HzLogManager.setPrefix(prefix)
@@ -150,11 +159,11 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
     // 处理文件输出设置
     private func handleEnableFileOutput(call: FlutterMethodCall, result: FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
-              let open = arguments["open"] as? Bool else {
+              let nable = arguments["enable"] as? Bool else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for enableFileOutput", details: call.arguments))
             return
         }
-        HzLogManager.enableFileLog(enable: open)
+        HzLogManager.enableFileLog(enable: nable)
         result(nil)
     }
 
@@ -176,5 +185,35 @@ public class HzLogPlugin: NSObject, FlutterPlugin {
     
     private func handleGetLogFiles(call: FlutterMethodCall, result: FlutterResult) {
         result(HzLogManager.getLogFiles())
+    }
+    
+    private func handleSetMaxServerLogCount(call: FlutterMethodCall, result: FlutterResult) {
+        guard let arguments = call.arguments as? [String: Any],
+              let maxLogCount = arguments["maxCount"] as? Int else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setMaxServerLogCount", details: call.arguments))
+            return
+        }
+        HzLogManager.setMaxServerLogCount(maxLogCount)
+        result(nil)
+    }
+    
+    private func handleSetMaxServerLogInterval(call: FlutterMethodCall, result: FlutterResult) {
+        guard let arguments = call.arguments as? [String: Any],
+              let logInterval = arguments["maxInterval"] as? Int else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setMaxServerLogInterva", details: call.arguments))
+            return
+        }
+        HzLogManager.setMaxServerLogInterval(logInterval)
+        result(nil)
+    }
+    
+    private func handleSetMaxServerLogSize(call: FlutterMethodCall, result: FlutterResult) {
+        guard let arguments = call.arguments as? [String: Any],
+              let maxLogSize = arguments["maxSize"] as? Int else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for setMaxServerLogSize", details: call.arguments))
+            return
+        }
+        HzLogManager.setMaxServerLogSize(maxLogSize)
+        result(nil)
     }
 }

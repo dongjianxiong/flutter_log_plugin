@@ -14,6 +14,7 @@ public class HzLogManager {
     private init() {
         fileOutputs.append(HzFileLogOutput.shared)
         consoleOutputs.append(HzConsoleLogOutput.shared)
+//        serverOutputs.append(HzServerLogOutput(serverURL: URL(fileURLWithPath: "https://www.baidu.com")))
     }
     
     private var serverOutputs = Array<HzLogOutput>()
@@ -86,18 +87,38 @@ public class HzLogManager {
         }
     }
     
+    // 设置附加信息
     public static func setExtra(key: String, value: Any) {
         HzLogConfig.extra[key] = value
     }
     
-
     // 设置当前日志级别
     public static func setLogLevel(_ level: HzLogLevel) {
         HzLogConfig.logLevel = level
     }
     
+    // 设置前缀
     public static func setPrefix(_ prefix: String) {
         HzLogConfig.prefix = prefix
+    }
+    
+    // 设置最大字符个数，最大值为8000
+    public static func setMaxServerLogSize(_ maxSize: Int) {
+        if (maxSize > 0 && maxSize <= 8000) {
+            HzLogConfig.maxServerLogSize = maxSize
+        } else {
+            HzLog.e(message: "最大上传日志字符长度超过0~80的区间", tag: "HzLogManager", stackLimit: 2)
+        }
+    }
+    
+    // 设置最大合并日志个数
+    public static func setMaxServerLogCount(_ logCount: Int) {
+        HzLogConfig.maxServerLogCount = logCount
+    }
+    
+    // 设置最大日志上传间隔
+    public static func setMaxServerLogInterval(_ timeInterval: Int) {
+        HzLogConfig.maxServerLogInterval = TimeInterval(timeInterval)
     }
     
     // 判断日志是否需要打印
@@ -106,13 +127,13 @@ public class HzLogManager {
     }
     
     public static func log(tag: String? = nil,
-                    content: String,
-                    level: HzLogLevel,
-                    date: Date,
-                    error: String? = nil,
-                    stack: String? = nil,
-                    print: Bool = true,
-                    report: Bool = false) {
+                           message: String,
+                           level: HzLogLevel,
+                           date: Date,
+                           error: String? = nil,
+                           stack: String? = nil,
+                           print: Bool = true,
+                           report: Bool = false) {
         guard shouldLog(level: level) else {
             return // 不打印低于当前日志级别的日志
         }
@@ -120,7 +141,7 @@ public class HzLogManager {
         let threadId = Thread.isMainThread ? "main-thread": String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? Thread.current.description
         // 构建日志信息
         let logEvent = HzLogEvent(level: level, 
-                                  message: content,
+                                  message: message,
                                   tag: tag,
                                   error: error,
                                   stackTrace: stack,
@@ -148,17 +169,17 @@ public class HzLogManager {
     }
 
     public static func reportLog(tag: String? = nil,
-                          content: String,
-                          level: HzLogLevel,
-                          date: Date,
-                          error: String? = nil,
-                          stack: String? = nil,
-                          report: Bool = false) {
+                                 message: String,
+                                 level: HzLogLevel,
+                                 date: Date,
+                                 error: String? = nil,
+                                 stack: String? = nil,
+                                 report: Bool = false) {
     
         let threadId = Thread.isMainThread ? "main-thread": String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? Thread.current.description
         // 构建日志信息
         let logEvent = HzLogEvent(level: level,
-                                  message: content,
+                                  message: message,
                                   tag: tag ?? HzLogConfig.prefix,
                                   error: error,
                                   stackTrace: stack,

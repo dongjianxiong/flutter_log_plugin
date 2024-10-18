@@ -23,7 +23,7 @@ class HzLogPlugin : FlutterPlugin, MethodCallHandler {
         if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
         } else if (call.method == "log") {
-            val log = call.argument<String>("content")
+            val log = call.argument<String>("message")
             val tag = call.argument<String>("tag") ?: ""
             val level = call.argument<Int>("level") ?: 1000
             val error = call.argument<String>("error")

@@ -1,26 +1,15 @@
-//
-//  HzServerLogOutput.swift
-//  hz_log_plugin
-//
-//  Created by itbox_djx on 2024/10/15.
-//
-
 import Foundation
 
-
-class HzServerLogOutput: HzLogOutput {
+class HzServerLogOutput: HzLogBaseServerOutput {
   
     private let serverURL: URL
-
     init(serverURL: URL) {
         self.serverURL = serverURL
+        super.init()
     }
 
-    func log(_ logEvent: HzLogEvent) {
-        uploadLogToServer(logEvent.reportLog)
-    }
-    
-    private func uploadLogToServer(_ message: String) {
+    internal override func uploadLogToServer(_ message: String, completion: @escaping (Bool) -> Void) {
+        
         var request = URLRequest(url: serverURL)
         request.httpMethod = "POST"
         request.httpBody = message.data(using: .utf8)
@@ -29,9 +18,11 @@ class HzServerLogOutput: HzLogOutput {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Failed to upload log: \(error)")
+                completion(false)
                 return
             }
             print("Log uploaded successfully")
+            completion(true)
         }
         task.resume()
     }

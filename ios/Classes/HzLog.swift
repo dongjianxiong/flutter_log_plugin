@@ -10,23 +10,28 @@ import Foundation
 public class HzLog {
 
     public static func log(
+        message: String,
         tag: String? = nil,
-        content: String,
         level: HzLogLevel,
         error: String? = nil,
         stackLimit: Int = 0,
         report: Bool = false
     ) {
         // 获取调用堆栈符号
-        let stackSymbols = Thread.callStackSymbols
+        var stackTrace : String?
+        if stackLimit > 0 {
+            let stackSymbols = Thread.callStackSymbols
+            stackTrace = logLimitedStackTrace(stackSymbols: stackSymbols, level: level, limit: stackLimit)
+        }
+        
         // 记录日志，限制堆栈跟踪的数量
         HzLogManager.log(
             tag: tag,
-            content: content,
+            message: message,
             level: level,
             date: Date(),
             error: error,
-            stack: logLimitedStackTrace(stackSymbols: stackSymbols, level: level, limit: stackLimit),
+            stack: stackTrace,
             report: report
         )
     }
@@ -44,27 +49,27 @@ public class HzLog {
     }
     
     // 快捷日志方法
-    public static func t(tag: String, content: String, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
-        log(tag: tag, content: content, level: .trace, error: error, stackLimit: stackLimit, report: report)
+    public static func t(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
+        log(message: message, tag: tag, level: .trace, error: error, stackLimit: stackLimit, report: report)
     }
 
-    public static func d(tag: String, content: String, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
-        log(tag: tag, content: content, level: .debug, error: error, stackLimit: stackLimit, report: report)
+    public static func d(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
+        log(message: message, tag: tag, level: .debug, error: error, stackLimit: stackLimit, report: report)
     }
 
-    public static func i(tag: String, content: String, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
-        log(tag: tag, content: content, level: .info, error: error, stackLimit: stackLimit, report: report)
+    public static func i(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 0, report: Bool = true) {
+        log(message: message, tag: tag, level: .info, error: error, stackLimit: stackLimit, report: report)
     }
 
-    public static func w(tag: String, content: String, error: String? = nil, stackLimit: Int = 0, report: Bool = false) {
-        log(tag: tag, content: content, level: .warning, error: error, stackLimit: stackLimit, report: report)
+    public static func w(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 0, report: Bool = true) {
+        log(message: message, tag: tag, level: .warning, error: error, stackLimit: stackLimit, report: report)
     }
 
-    public static func e(tag: String, content: String, error: String? = nil, stackLimit: Int = 10, report: Bool = false) {
-        log(tag: tag, content: content, level: .error, error: error, stackLimit: stackLimit, report: report)
+    public static func e(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 5, report: Bool = true) {
+        log(message: message, tag: tag, level: .error, error: error, stackLimit: stackLimit, report: report)
     }
 
-    public static func f(tag: String, content: String, error: String? = nil, stackLimit: Int = 10, report: Bool = false) {
-        log(tag: tag, content: content, level: .fatal, error: error, stackLimit: stackLimit, report: report)
+    public static func f(message: String, tag: String? = nil, error: String? = nil, stackLimit: Int = 5, report: Bool = true) {
+        log(message: message, tag: tag, level: .fatal, error: error, stackLimit: stackLimit, report: report)
     }
 }
