@@ -107,7 +107,7 @@ public class HzLogManager {
         if (maxSize > 0 && maxSize <= 8000) {
             HzLogConfig.maxServerLogSize = maxSize
         } else {
-            HzLog.e(message: "最大上传日志字符长度超过0~80的区间", tag: "HzLogManager", stackLimit: 2)
+            HzLog.e(message: "最大上传日志字符长度超过0~8000的区间", tag: "HzLogManager", stackLimit: 2)
         }
     }
     
