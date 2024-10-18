@@ -158,7 +158,7 @@ class _MyAppState extends State<MyApp> {
               text: '查看日志',
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HzLogViewerPage()),
+                  MaterialPageRoute(builder: (context) => const HzLogViewerPage()),
                 );
               },
               color: Colors.blue,

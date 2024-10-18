@@ -9,9 +9,9 @@ import UIKit
 
 class HzLogConfig: NSObject {
 
-    static var consoleEnabled = true
-    static var fileEnabled = true
-    static var serverEnabled = true // 假设上传功能未实现
+    static var consoleEnabled = true // 默认开启
+    static var fileEnabled = false // 默认关闭
+    static var serverEnabled = true // 默认支持上传
     static var feishuNotifyEnabled = true // 飞书通知默认未开启
     // 默认日志级别
     static var logLevel: HzLogLevel = .all

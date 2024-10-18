@@ -25,7 +25,7 @@ class DriverServerOutput: HzLogBaseServerOutput {
     
     override func uploadLogToServer(_ message: String, completion: @escaping (Bool) -> Void) {
         print("======logEvent.reportLog:\(message)")
-        AlibabaCloudRUM.setCustomLog(message, snapshots: "12345678", level: "INFO_ERROR")
+        AlibabaCloudRUM.setCustomLog(message, name: "demo", snapshots: "12345678", level: "INFO_ERROR")
         completion(true)
     }
 }

@@ -20,7 +20,7 @@ class HzFileLogOutput: HzLogOutput {
     private let logDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("HzLogs")
     
     // 单个日志文件最大大小（以字节为单位），例如 5MB = 5 * 1024 * 1024 字节
-    private let maxFileSize: UInt64 = 5 * 1024 * 1024
+    private let maxFileSize: UInt64 = 2 * 1024 * 1024
     
     // 日志文件最多保存的数量
     private let maxLogFilesCount = 5
@@ -52,9 +52,13 @@ class HzFileLogOutput: HzLogOutput {
     // 创建日志目录
     private func createLogDirectoryIfNeeded() {
         safeQueueSync {
-//            clearLogFile()
             if !FileManager.default.fileExists(atPath: logDirectory.path) {
-                try? FileManager.default.createDirectory(at: logDirectory, withIntermediateDirectories: true, attributes: nil)
+                do {
+                    try FileManager.default.createDirectory(at: logDirectory, withIntermediateDirectories: true, attributes: nil)
+                    print("Log directory created successfully.")
+                } catch {
+                    print("Failed to create log directory: \(error)")
+                }
             }
         }
     }
@@ -63,7 +67,7 @@ class HzFileLogOutput: HzLogOutput {
         let currentLogFileURL = self.getCurrentLogFileURL()
 
         // 为日志消息手动添加换行符
-        let logMessageWithNewline = message + "\n" + "\n"// 在 iOS 系统，使用 "\n" 足够
+        let logMessageWithNewline = message + "\n" + "\n"
 
         if let data = logMessageWithNewline.data(using: .utf8) {
             if FileManager.default.fileExists(atPath: currentLogFileURL.path) {
@@ -74,14 +78,14 @@ class HzFileLogOutput: HzLogOutput {
                     fileHandle.write(data)
                     fileHandle.closeFile()
                 } catch {
-                    print("Failed to open file handle: \(error)")
+                    print("-------Failed to open file handle: \(error)")
                 }
             } else {
                 // 如果文件不存在，创建文件并写入日志
                 do {
                     try data.write(to: currentLogFileURL, options: .atomic)
                 } catch {
-                    print("Failed to write log file: \(error)")
+                    print("-------Failed to write log file: \(error)")
                 }
             }
         }
@@ -89,7 +93,6 @@ class HzFileLogOutput: HzLogOutput {
         // 检查日志文件大小并进行日志轮换
         self.checkLogFileSizeAndRotateIfNeeded()
     }
-
 
     // 获取当前日志文件路径
     private func getCurrentLogFileURL() -> URL {
@@ -102,6 +105,7 @@ class HzFileLogOutput: HzLogOutput {
 
         if let attributes = try? FileManager.default.attributesOfItem(atPath: currentLogFileURL.path),
            let fileSize = attributes[.size] as? UInt64 {
+            print("-------currentFileSize:\(fileSize), maxFileSize:\(maxFileSize)")
             if fileSize > maxFileSize {
                 rotateLogFiles()
             }
@@ -110,6 +114,7 @@ class HzFileLogOutput: HzLogOutput {
 
     // 轮换日志文件
     private func rotateLogFiles() {
+        print("-------rotateLogFiles")
         safeQueueSync {
             let fileManager = FileManager.default
             let currentLogFileURL = getCurrentLogFileURL()
@@ -138,6 +143,7 @@ class HzFileLogOutput: HzLogOutput {
 
     // 删除多余的日志文件
     private func deleteOldLogFilesIfNeeded() {
+        print("-------deleteOldLogFilesIfNeeded")
         let fileManager = FileManager.default
         let oldestLogFileURL = logDirectory.appendingPathComponent("log_\(maxLogFilesCount).txt")
 
@@ -154,7 +160,7 @@ class HzFileLogOutput: HzLogOutput {
                 let logContent = try String(contentsOf: currentLogFileURL, encoding: .utf8)
                 return logContent
             } catch {
-                print("Failed to read log file: \(error)")
+                print("-------Failed to read log file: \(error)")
                 return ""
             }
         }
@@ -162,6 +168,7 @@ class HzFileLogOutput: HzLogOutput {
 
     // 读取所有日志文件内容（用于上传）
     func readEntireLogFiles() -> String {
+        print("-------readEntireLogFiles")
         return safeQueueSync {
             var allLogs = ""
             for i in 1...maxLogFilesCount {
@@ -183,10 +190,17 @@ class HzFileLogOutput: HzLogOutput {
 
     // 清空日志文件
     func clearLogFile() -> Void {
+        print("-------Attempting to clear log file")
         return safeQueueSync {
             let currentLogFileURL = getCurrentLogFileURL()
-            try? "".data(using: .utf8)?.write(to: currentLogFileURL)
-            print("Log file cleared.")
+            do {
+                let fileHandle = try FileHandle(forWritingTo: currentLogFileURL)
+                fileHandle.closeFile()
+                try "".data(using: .utf8)?.write(to: currentLogFileURL)
+                print("-------Log file cleared successfully.")
+            } catch {
+                print("-------Failed to clear log file: \(error)")
+            }
         }
     }
 }

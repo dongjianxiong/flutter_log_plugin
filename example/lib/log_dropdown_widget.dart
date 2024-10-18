@@ -63,7 +63,7 @@ class _LogDropdownWidgetState extends State<LogDropdownWidget> {
         HzLog.f('This is a fatal log.', tag: 'Order');
         break;
       case '压测':
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
           print("这是用print打印的日志信息");
           Random random = Random();
           // 生成 0 到 5 之间的随机数（包含 0，不包含 6）
@@ -98,7 +98,7 @@ class _LogDropdownWidgetState extends State<LogDropdownWidget> {
                   'This is a Fatal log.You can see it in the logcat or file or feishu. I hope you enjoy it!',
                   tag: 'Order',
                   stackLimit: 5,
-                  error: 'Error');
+                  error: 'Fatal');
               break;
           }
         }

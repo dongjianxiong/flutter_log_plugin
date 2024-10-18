@@ -62,7 +62,7 @@ class _LogViewerPageState extends State<HzLogViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('日志记录'),
+        title: Text('日志记录(${logFiles.length})'),
         actions: [
           IconButton(
             icon: const Icon(Icons.copy),
