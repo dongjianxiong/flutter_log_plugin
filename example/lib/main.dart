@@ -36,6 +36,8 @@ class _MyAppState extends State<MyApp> {
   void _initializeLogging() {
     HzLog.setPrefix("Driver");
     HzLog.enableFileOutput(true);
+    HzLog.setExtra('userId', 'D1674567263746WUETWUU');
+    HzLog.setExtra('vimId', 'D1674567263746WUETWUuw7382643');
     HzLog.setMaxServerLogCount(5);
     HzLog.setMaxServerLogSize(2000);
     HzLog.setMaxServerLogInterval(2);

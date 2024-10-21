@@ -26,7 +26,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
     private var logQueue: [String] = []
     private var currentLogSize: Int = 0
 
-    private let queue = DispatchQueue(label: "cn.itbox.logUpload.queue") // 线程安全队列
+    private let uploadQueue = DispatchQueue(label: "cn.itbox.logUpload.queue") // 线程安全队列
     // 创建一个标识符
     private let queueKey = DispatchSpecificKey<Void>()
     
@@ -35,7 +35,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
 
     
     public init() {
-        queue.setSpecific(key: queueKey, value: ())
+        uploadQueue.setSpecific(key: queueKey, value: ())
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
@@ -50,7 +50,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
     
     
     public func log(_ logEvent: HzLogEvent) {
-        queue.async { [weak self] in
+        uploadQueue.async { [weak self] in
             guard let self = self else { return }
             
             let message = logEvent.reportLog
@@ -99,7 +99,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
         if DispatchQueue.getSpecific(key: queueKey) != nil {
             return block()
         } else {
-            return queue.sync {
+            return uploadQueue.sync {
                 return block()
             }
         }
@@ -109,7 +109,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
         if DispatchQueue.getSpecific(key: queueKey) != nil {
             block()
         } else {
-            queue.async {
+            uploadQueue.async {
                 block()
             }
         }
@@ -141,7 +141,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
             guard let self = self else { return }
             
             while true {
-                self.queue.async {
+                self.uploadQueue.async {
                     if Date().timeIntervalSince(self.lastUploadTime) >= self.maxInterval {
                         self.uploadLogs()
                     }

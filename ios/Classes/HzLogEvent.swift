@@ -63,6 +63,10 @@ public class HzLogEvent {
     public var reportLog: String {
         
         var logMsg = "[\(date.toFormatString())]-\(baseInfo) \(message)"
+        
+        let extraString = HzLogConfig.extra.map { "\($0):\($1)" }.joined(separator: "|")
+        logMsg += "\n\(extraString)"
+
         if let error = error, !error.isEmpty {
             logMsg += "\nError: \(error)"
         }

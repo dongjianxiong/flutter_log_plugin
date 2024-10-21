@@ -26,7 +26,7 @@ class HzFileLogOutput: HzLogOutput {
     private let maxLogFilesCount = 5
     
     // 串行队列用于保证线程安全
-    private let fileQueue = DispatchQueue(label: "cn.itbox.hzlog.file.queue")
+    private let fileQueue = DispatchQueue(label: "cn.itbox.hzlog.file.queue", qos: .background)
     // 创建一个标识符
     private let queueKey = DispatchSpecificKey<Void>()
         
