@@ -1,6 +1,6 @@
 import Foundation
 
-class HzServerLogOutput: HzLogBaseServerOutput {
+class HzServerLogOutput: HzLogBaseOutput {
   
     private let serverURL: URL
     init(serverURL: URL) {
@@ -8,7 +8,7 @@ class HzServerLogOutput: HzLogBaseServerOutput {
         super.init()
     }
 
-    internal override func uploadLogToServer(_ message: String, completion: @escaping (Bool) -> Void) {
+    internal override func writeLog(_ message: String, completion: @escaping (Bool) -> Void) {
         
         var request = URLRequest(url: serverURL)
         request.httpMethod = "POST"

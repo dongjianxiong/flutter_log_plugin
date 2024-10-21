@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class HzLogBaseServerOutput: HzLogOutput {
+open class HzLogBaseOutput: HzLogOutput {
   
 
     var maxLogSize: Int { // 最大字符个数
@@ -23,24 +23,24 @@ open class HzLogBaseServerOutput: HzLogOutput {
         return HzLogConfig.maxServerLogInterval
     }
     
-    private var logQueue: [String] = []
-    private var currentLogSize: Int = 0
+    var bufferQueue: [String] = []
+    var currentLogSize: Int = 0
 
-    private let uploadQueue = DispatchQueue(label: "cn.itbox.logUpload.queue") // 线程安全队列
+    let logQueue = DispatchQueue(label: "cn.itbox.log.queue") // 线程安全队列
     // 创建一个标识符
     private let queueKey = DispatchSpecificKey<Void>()
     
     private var lastUploadTime: Date = Date() // 记录上次上传时间
-    private let backgroundQueue = DispatchQueue(label: "cn.itbox.logUpload.background", qos: .background) // 后台线程
+    private let backgroundQueue = DispatchQueue(label: "cn.itbox.log.background", qos: .background) // 后台线程
 
     
     public init() {
-        uploadQueue.setSpecific(key: queueKey, value: ())
+        logQueue.setSpecific(key: queueKey, value: ())
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     @objc func appDidEnterBackground() {
-        self.uploadLogs()
+        self.startWrite()
     }
 
     
@@ -50,29 +50,29 @@ open class HzLogBaseServerOutput: HzLogOutput {
     
     
     public func log(_ logEvent: HzLogEvent) {
-        uploadQueue.async { [weak self] in
+        logQueue.async { [weak self] in
             guard let self = self else { return }
             
             let message = logEvent.reportLog
-            self.logQueue.append(message)
+            self.bufferQueue.append(message)
             self.currentLogSize += message.count // 计算字符个数
             // 检查当前日志字符个数是否超过阈值
-            if canUpload {
-                self.uploadLogs()
+            if canWrite {
+                self.startWrite()
             }
         }
     }
     
-    private var canUpload: Bool {
+    var canWrite: Bool {
         let isSizeOut = self.currentLogSize >= self.maxLogSize
-        let isCountOut = self.logQueue.count >= self.maxLogCount
+        let isCountOut = self.bufferQueue.count >= self.maxLogCount
         let currentTime = Date()
         let timeInterval = currentTime.timeIntervalSince(self.lastUploadTime)
         let isTimeOut = timeInterval >= self.maxInterval
         if isSizeOut || isCountOut || isTimeOut  {
 #if DEBUG
             print("=====currentLogSize: \(self.currentLogSize), maxSize:\(self.maxLogSize)")
-            print("=====currentLogCount: \(self.logQueue.count), maxCount:\(self.maxLogCount)")
+            print("=====currentLogCount: \(self.bufferQueue.count), maxCount:\(self.maxLogCount)")
             print("=====currentTimeInterval: \(timeInterval), maxInterval:\(self.maxInterval)")
             print("=====上传条件：isSizeOut-\(isSizeOut), isCountOut-\(isCountOut), isTimeOut:-\(isTimeOut)")#else
 
@@ -99,7 +99,7 @@ open class HzLogBaseServerOutput: HzLogOutput {
         if DispatchQueue.getSpecific(key: queueKey) != nil {
             return block()
         } else {
-            return uploadQueue.sync {
+            return logQueue.sync {
                 return block()
             }
         }
@@ -109,23 +109,23 @@ open class HzLogBaseServerOutput: HzLogOutput {
         if DispatchQueue.getSpecific(key: queueKey) != nil {
             block()
         } else {
-            uploadQueue.async {
+            logQueue.async {
                 block()
             }
         }
     }
 
-    private func uploadLogs() {
-        if self.logQueue.isEmpty {
+    func startWrite() {
+        if self.bufferQueue.isEmpty {
             self.resetState()
             return
         }
         safeQueueAsync { [weak self] in
             guard let self = self else { return }
-            let combinedLogs = self.logQueue.joined(separator: "\n\n")
-            self.logQueue.removeAll()
+            let combinedLogs = self.bufferQueue.joined(separator: "\n\n")
+            self.bufferQueue.removeAll()
             self.resetState()
-            self.uploadLogToServer(combinedLogs) { success in
+            self.writeLog(combinedLogs) { success in
                 if success {
                     print("Log upload success, retrying...")
                 } else {
@@ -141,9 +141,9 @@ open class HzLogBaseServerOutput: HzLogOutput {
             guard let self = self else { return }
             
             while true {
-                self.uploadQueue.async {
+                self.logQueue.async {
                     if Date().timeIntervalSince(self.lastUploadTime) >= self.maxInterval {
-                        self.uploadLogs()
+                        self.startWrite()
                     }
                 }
                 Thread.sleep(forTimeInterval: 1.0)
@@ -151,8 +151,8 @@ open class HzLogBaseServerOutput: HzLogOutput {
         }
     }
     
-    open func uploadLogToServer(_ message: String, completion: @escaping (Bool) -> Void) {
-        fatalError("Subclasses must implement `uploadLogToServer`")
+    open func writeLog(_ message: String, completion: @escaping (Bool) -> Void) {
+        fatalError("Subclasses must implement `writeLog`")
     }
     
 }

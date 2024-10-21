@@ -8,9 +8,9 @@
 import Foundation
 
 
-class HzConsoleLogOutput: HzLogOutput {
+class HzConsoleLogPrinter: HzLogOutput {
     
-    static let shared = HzConsoleLogOutput()
+    static let shared = HzConsoleLogPrinter()
     private init() {
         
     }

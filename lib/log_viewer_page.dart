@@ -132,6 +132,13 @@ class _LogViewerPageState extends State<HzLogViewerPage> {
 
   // 正则表达式提取时间作为标题，时间后的部分作为副标题
   Map<String, String> _parseLog(int index) {
+    // String log = logFiles[index];
+    // Map<String, dynamic> map = json.decode(log);
+    // return {
+    //   'title': map['date'], // 只提取时间作为标题
+    //   'subtitle': map['message'], // 提取时间后面的内容作为副标题
+    // };
+
     // 匹配时间部分和其后的日志内容
     final RegExp logRegExp =
         RegExp(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\](.*)"); // 匹配时间及其后的内容

@@ -9,7 +9,7 @@ import UIKit
 import AlibabaCloudRUM
 import hz_log_plugin
 
-class DriverServerOutput: HzLogBaseServerOutput {
+class DriverServerOutput: HzLogBaseOutput {
 
     override init() {
         super.init()
@@ -23,7 +23,7 @@ class DriverServerOutput: HzLogBaseServerOutput {
         AlibabaCloudRUM.start(armsAppID)// AppID，创建RUM应用时获取。
     }
     
-    override func uploadLogToServer(_ message: String, completion: @escaping (Bool) -> Void) {
+    override func writeLog(_ message: String, completion: @escaping (Bool) -> Void) {
         print("======logEvent.reportLog:\(message)")
         AlibabaCloudRUM.setCustomLog(message, name: "demo", snapshots: "12345678", level: "INFO_ERROR")
         completion(true)

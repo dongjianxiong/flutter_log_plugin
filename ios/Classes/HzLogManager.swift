@@ -12,8 +12,10 @@ public class HzLogManager {
     public static let shared = HzLogManager()
     
     private init() {
-        fileOutputs.append(HzFileLogOutput.shared)
-        consoleOutputs.append(HzConsoleLogOutput.shared)
+//        fileOutputs.append(HzFileLogOutput.shared)
+        fileOutputs.append(HzLogFileOutput.shared)
+//        fileOutputs.append(HzLogFileJsonOutput.shared)
+        consoleOutputs.append(HzConsoleLogPrinter.shared)
 //        serverOutputs.append(HzServerLogOutput(serverURL: URL(fileURLWithPath: "https://www.baidu.com")))
     }
     
@@ -201,11 +203,11 @@ public class HzLogManager {
     }
 
     public static func clearLog() -> Void {
-        HzFileLogOutput.shared.clearAllLogFiles()
+        HzLogFileOutput.shared.clearAllLogFiles()
     }
 
     public static func getLogFiles() -> String  {
-        return HzFileLogOutput.shared.readEntireLogFiles()
+        return HzLogFileOutput.shared.readEntireLogFiles()
     }
     
 }

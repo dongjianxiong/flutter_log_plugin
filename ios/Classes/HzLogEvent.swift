@@ -110,6 +110,29 @@ public class HzLogEvent {
             report: report ?? self.report
         )
     }
+    
+    
+    func toJSON() -> [String: Any] {
+        return [
+           "level": level.rawValue,  // 假设 HzLogLevel 实现了 rawValue
+           "message": message,
+           "tag": tag ?? "",  // 如果 tag 为空，使用空字符串
+           "error": error ?? "",
+           "stackTrace": stackTrace ?? "",
+           "date": date.toFormatString(),  // 日期转为字符串
+           "threadID": threadID,
+           "report": report
+        ]
+    }
+       
+    // 将字典转换为 JSON 字符串
+    func toJSONString() -> String? {
+        let dict = toJSON()
+        if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
+           return String(data: jsonData, encoding: .utf8)
+        }
+        return nil
+    }
 
 }
 
